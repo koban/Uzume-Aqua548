@@ -1,185 +1,370 @@
 #include "t_services.h"
+
 #include "s_services.h"
+
 #include <cdefBF533.h>
+
 #include "ad1836a.h"
 
 
 
+
+
+
+
 #define pFLASHA_PORTA_OUT ((volatile unsigned char * )0x20270004)
+
 #define pFLASHA_PORTA_DIR ((volatile unsigned char * )0x20270006)
 
 
+
+
+
 struct DMA_DESCRIPTOR{
+
 	struct DMA_DESCRIPTOR * next;
+
 	void * start;
+
 	unsigned short config;
+
 	unsigned short x_count;
+
 	short x_modify;
+
 };
 
 
-// CODEC åˆæœŸåŒ–ãƒ‡ãƒ¼ã‚¿åˆ—
+
+
+
+// CODEC ‰Šú‰»ƒf[ƒ^—ñ
+
 static short sCodec1836TxRegs[] =
+
 {									
+
 					DAC_CONTROL_1	| 0x000,
+
 					DAC_CONTROL_2	| 0x000,
+
 					DAC_VOLUME_0	| 0x3ff,
+
 					DAC_VOLUME_1	| 0x3ff,
+
 					DAC_VOLUME_2	| 0x3ff,
+
 					DAC_VOLUME_3	| 0x3ff,
+
 					DAC_VOLUME_4	| 0x3ff,
+
 					DAC_VOLUME_5	| 0x3ff,
+
 					ADC_CONTROL_1	| 0x000,
+
 					ADC_CONTROL_2	| 0x180,
+
 					ADC_CONTROL_3	| 0x000
+
 					
+
 };
 
-// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªãƒãƒƒãƒ•ã‚¡
-// 1ã‚µãƒ³ãƒ—ãƒ«ã‚ãŸã‚Š8ãƒ‡ãƒ¼ã‚¿ã‚’è»¢é€ã™ã‚‹ã€‚ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡æ§‹æˆãªã®ã§ã•ã‚‰ã«ãã®2å€å¿…è¦
+
+
+// ƒI[ƒfƒBƒIƒoƒbƒtƒ@
+
+// 1ƒTƒ“ƒvƒ‹‚ ‚½‚è8ƒf[ƒ^‚ð“]‘—‚·‚éBƒ_ƒuƒ‹ƒoƒbƒtƒ@\¬‚È‚Ì‚Å‚³‚ç‚É‚»‚Ì2”{•K—v
+
 static struct CODEC_BUFFER TxBuffer[2], RxBuffer[2];
+
+
 
 static struct DMA_DESCRIPTOR tDescA, tDescB, rDescA, rDescB;
 
+
+
 void run_ad1836_task(VP_INT extinf)
+
 {
-	ena_int( INTNO_SPI ); 			// SPI DMAå‰²ã‚Šè¾¼ã¿ãƒžã‚¹ã‚¯ã‚’ã¯ãšã™ 
-	ena_int( INTNO_SPORT0_RX );		// SPORT0 DMAå‰²ã‚Šè¾¼ã¿ãƒžã‚¹ã‚¯ã‚’ã¯ãšã™ 
+
+	ena_int( INTNO_SPI ); 			// SPI DMAŠ„‚èž‚Ýƒ}ƒXƒN‚ð‚Í‚¸‚· 
+
+	ena_int( INTNO_SPORT0_RX );		// SPORT0 DMAŠ„‚èž‚Ýƒ}ƒXƒN‚ð‚Í‚¸‚· 
+
+
 
 //--------------------------------------------------------
-// 			AD1836ã®ãƒªã‚»ãƒƒãƒˆ 
+
+// 			AD1836‚ÌƒŠƒZƒbƒg 
+
 //
-    *pFLASHA_PORTA_DIR |= 0x01;   	// CODEC ãƒªã‚»ãƒƒãƒˆä¿¡å·ã‚’å‡ºåŠ›ã«	
-    *pFLASHA_PORTA_OUT &= 0xFE;   	// CODEC ãƒªã‚»ãƒƒãƒˆã‚’ã‚¢ã‚µãƒ¼ãƒˆ	
-	tslp_tsk( 1 );					// ãƒªã‚»ãƒƒãƒˆ=Lãƒ‘ãƒ«ã‚¹ã‚’ä½œã‚‹ 
-    *pFLASHA_PORTA_OUT |= 0x01;    	// CODEC ãƒªã‚»ãƒƒãƒˆã‚’ãƒ‡ã‚¢ã‚µãƒ¼ãƒˆ 
-	tslp_tsk( 1 );					// ãƒªã‚»ãƒƒãƒˆã‹ã‚‰ã®å›žå¾©æ™‚é–“ã‚’ä¸Žãˆã‚‹ 
+
+    *pFLASHA_PORTA_DIR |= 0x01;   	// CODEC ƒŠƒZƒbƒgM†‚ðo—Í‚É	
+
+    *pFLASHA_PORTA_OUT &= 0xFE;   	// CODEC ƒŠƒZƒbƒg‚ðƒAƒT[ƒg	
+
+	tslp_tsk( 1 );					// ƒŠƒZƒbƒg=Lƒpƒ‹ƒX‚ðì‚é 
+
+    *pFLASHA_PORTA_OUT |= 0x01;    	// CODEC ƒŠƒZƒbƒg‚ðƒfƒAƒT[ƒg 
+
+	tslp_tsk( 1 );					// ƒŠƒZƒbƒg‚©‚ç‚Ì‰ñ•œŽžŠÔ‚ð—^‚¦‚é 
+
+
 
 //--------------------------------------------------------
-//			SPIè¨­å®š 
+
+//			SPIÝ’è 
+
 // 	
-	// PF4ã¯AD1836ã®SPI SSãƒ”ãƒ³ 
+
+	// PF4‚ÍAD1836‚ÌSPI SSƒsƒ“ 
+
 	*pSPI_FLG = FLS4;
-	// SPIãƒ“ãƒƒãƒˆãƒ¬ãƒ¼ãƒˆ = SCLK/(2*SPIBAUD) :ãŠã‚ˆã 2MHz	
+
+	// SPIƒrƒbƒgƒŒ[ƒg = SCLK/(2*SPIBAUD) :‚¨‚æ‚» 2MHz	
+
 	*pSPI_BAUD = 32;
-	// SPI DMA æ›¸ãè¾¼ã¿ã«ã‚ˆã‚‹ãƒˆãƒªã‚¬, 16bit ãƒ‡ãƒ¼ã‚¿, MSB first, ãƒžã‚¹ã‚¿
+
+	// SPI DMA ‘‚«ž‚Ý‚É‚æ‚éƒgƒŠƒK, 16bit ƒf[ƒ^, MSB first, ƒ}ƒXƒ^
+
 	*pSPI_CTL = TIMOD | SIZE | MSTR;
 
+
+
 	
-	
-//--------------------------------------------------------
-//			 SPI DMA è¨­å®š 
-//
-	// 16bit ãƒ‡ãƒ¼ã‚¿ã€ãƒ¡ãƒ¢ãƒªã‹ã‚‰èª­ã¿å‡ºã—ã€çµ‚äº†å¾Œå‰²ã‚Šè¾¼ã¿
-	*pDMA5_CONFIG = WDSIZE_16 | DI_EN;
-	// CODEC åˆæœŸåŒ–æ–‡å­—åˆ—ã®ã‚¢ãƒ‰ãƒ¬ã‚¹ 
-	*pDMA5_START_ADDR = sCodec1836TxRegs;
-	// DMA è»¢é€ã‚«ã‚¦ãƒ³ãƒˆ 
-	*pDMA5_X_COUNT = sizeof( sCodec1836TxRegs ) / sizeof( short );
-	// DMA å¢—åˆ† 
-	*pDMA5_X_MODIFY = sizeof( short );
+
 	
 
 //--------------------------------------------------------
-//			 SPI é–‹å§‹
-	// DMA é–‹å§‹ 
+
+//			 SPI DMA Ý’è 
+
+//
+
+	// 16bit ƒf[ƒ^Aƒƒ‚ƒŠ‚©‚ç“Ç‚Ýo‚µAI—¹ŒãŠ„‚èž‚Ý
+
+	*pDMA5_CONFIG = WDSIZE_16 | DI_EN;
+
+	// CODEC ‰Šú‰»•¶Žš—ñ‚ÌƒAƒhƒŒƒX 
+
+	*pDMA5_START_ADDR = sCodec1836TxRegs;
+
+	// DMA “]‘—ƒJƒEƒ“ƒg 
+
+	*pDMA5_X_COUNT = sizeof( sCodec1836TxRegs ) / sizeof( short );
+
+	// DMA ‘•ª 
+
+	*pDMA5_X_MODIFY = sizeof( short );
+
+	
+
+
+
+//--------------------------------------------------------
+
+//			 SPI ŠJŽn
+
+	// DMA ŠJŽn 
+
 	*pDMA5_CONFIG |= DMAEN;
-	// SPI é–‹å§‹ 
+
+	// SPI ŠJŽn 
+
 	*pSPI_CTL |= SPE;
 
+
+
 	
-	// DMAé€å‡ºçµ‚äº†ã‚’å¾…ã¤ 
+
+	// DMA‘—oI—¹‚ð‘Ò‚Â 
+
 	wai_sem( spi_sem );
-	// DMAçµ‚äº†ã¯SPIé€ä¿¡çµ‚äº†ã§ã¯ãªã„ã®ã§ã€ã¡ã‚‡ã£ã¨å¾…ã¤ 
+
+	// DMAI—¹‚ÍSPI‘—MI—¹‚Å‚Í‚È‚¢‚Ì‚ÅA‚¿‚å‚Á‚Æ‘Ò‚Â 
+
 	tslp_tsk( 1 );
 
-//--------------------------------------------------------
-//		SPORT0 è¨­å®š 
-//			ãƒžãƒ«ãƒãƒãƒ£ãƒ³ãƒãƒ«ã®å ´åˆã€å¸¸ã« SPORTx_yCR1.LATFS = 0
-	// Sport0 å—ä¿¡è¨­å®š 
-	// å¤–éƒ¨ã‚¯ãƒ­ãƒƒã‚¯, å¤–éƒ¨åŒæœŸä¿¡å·, MSBãƒ•ã‚¡ãƒ¼ã‚¹ãƒˆ 
-	// 32-bit ãƒ‡ãƒ¼ã‚¿ 
-	*pSPORT0_RCR1 = RFSR;
-	*pSPORT0_RCR2 = 31;		// ãƒ‡ãƒ¼ã‚¿é•· 32
-	
-	// Sport0 é€ä¿¡è¨­å®š
-	// å¤–éƒ¨ã‚¯ãƒ­ãƒƒã‚¯, å¤–éƒ¨åŒæœŸä¿¡å·, MSBãƒ•ã‚¡ãƒ¼ã‚¹ãƒˆ 
-	// 32ãƒ“ãƒƒãƒˆãƒ‡ãƒ¼ã‚¿ 
-	*pSPORT0_TCR1 = TFSR;
-	*pSPORT0_TCR2 = 31;		// ãƒ‡ãƒ¼ã‚¿é•· 32 
-	
-	// ãƒ•ãƒ¬ãƒ¼ãƒ ã‚ãŸã‚Š8ã‚¹ãƒ­ãƒƒãƒˆã®ãƒ‡ãƒ¼ã‚¿ã‚’é€å—ã§ä½¿ã† 
-	*pSPORT0_MTCS0 = 0x000000FF;
-	*pSPORT0_MRCS0 = 0x000000FF;
-	
-	// ãƒžãƒ«ãƒãƒãƒ£ãƒ³ãƒãƒ«è¨­å®š
-	*pSPORT0_MCMC1 = 0x0000; // ã‚ªãƒ•ã‚»ãƒƒãƒˆ = 0, ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ã‚µã‚¤ã‚º = 8
-	*pSPORT0_MCMC2 = 0x1000 | MCMEN | MCDRXPE | MCDTXPE; // MFD = 1;
+
 
 //--------------------------------------------------------
-// 			SPORT DMA è¨­å®š 
+
+//		SPORT0 Ý’è 
+
+//			ƒ}ƒ‹ƒ`ƒ`ƒƒƒ“ƒlƒ‹‚Ìê‡Aí‚É SPORTx_yCR1.LATFS = 0
+
+	// Sport0 ŽóMÝ’è 
+
+	// ŠO•”ƒNƒƒbƒN, ŠO•”“¯ŠúM†, MSBƒtƒ@[ƒXƒg 
+
+	// 32-bit ƒf[ƒ^ 
+
+	*pSPORT0_RCR1 = RFSR;
+
+	*pSPORT0_RCR2 = 31;		// ƒf[ƒ^’· 32
+
+	
+
+	// Sport0 ‘—MÝ’è
+
+	// ŠO•”ƒNƒƒbƒN, ŠO•”“¯ŠúM†, MSBƒtƒ@[ƒXƒg 
+
+	// 32ƒrƒbƒgƒf[ƒ^ 
+
+	*pSPORT0_TCR1 = TFSR;
+
+	*pSPORT0_TCR2 = 31;		// ƒf[ƒ^’· 32 
+
+	
+
+	// ƒtƒŒ[ƒ€‚ ‚½‚è8ƒXƒƒbƒg‚Ìƒf[ƒ^‚ð‘—Žó‚ÅŽg‚¤ 
+
+	*pSPORT0_MTCS0 = 0x000000FF;
+
+	*pSPORT0_MRCS0 = 0x000000FF;
+
+	
+
+	// ƒ}ƒ‹ƒ`ƒ`ƒƒƒ“ƒlƒ‹Ý’è
+
+	*pSPORT0_MCMC1 = 0x0000; // ƒIƒtƒZƒbƒg = 0, ƒEƒCƒ“ƒhƒEƒTƒCƒY = 8
+
+	*pSPORT0_MCMC2 = 0x1000 | MCMEN | MCDRXPE | MCDTXPE; // MFD = 1;
+
+
+
+//--------------------------------------------------------
+
+// 			SPORT DMA Ý’è 
+
 //
-	// DMA1è¨­å®š (SPORT0 RX)
+
+	// DMA1Ý’è (SPORT0 RX)
+
 	rDescA.next = &rDescB;
+
 	rDescA.start = RxBuffer[0].data;
+
 	rDescA.config = 0x7700 | WNR | WDSIZE_32 | DI_EN | DMAEN;	// Large List, 7 short word.
+
 	rDescA.x_count = 8 * SAMPLE_PER_INTR;
+
 	rDescA.x_modify = 4;
+
 	
+
 	rDescB.next = &rDescA;
+
 	rDescB.start = RxBuffer[1].data;
+
 	rDescB.config = 0x7700 | WNR | WDSIZE_32 | DI_EN | DMAEN;	// Large List, 7 short word.
+
 	rDescB.x_count = 8 * SAMPLE_PER_INTR;
+
 	rDescB.x_modify = 4;
+
 	
+
 	
-	// DMA2è¨­å®š (SPORT0 TX)
+
+	// DMA2Ý’è (SPORT0 TX)
+
 	tDescA.next = &tDescB;
+
 	tDescA.start = TxBuffer[0].data;
+
 	tDescA.config = 0x7700 | WDSIZE_32 | DMAEN;	// Large List, 7 short word.
+
 	tDescA.x_count = 8 * SAMPLE_PER_INTR;
+
 	tDescA.x_modify = 4;
+
 	
+
 	tDescB.next = &tDescA;
+
 	tDescB.start = TxBuffer[1].data;
+
 	tDescB.config = 0x7700 | WDSIZE_32 | DMAEN;	// Large List, 7 short word.
+
 	tDescB.x_count = 8 * SAMPLE_PER_INTR;
+
 	tDescB.x_modify = 4;
 
 
+
+
+
 	*pDMA2_NEXT_DESC_PTR = &tDescA;
+
 	*pDMA1_NEXT_DESC_PTR = &rDescA;
+
 	*pDMA2_CONFIG = 0x7700 | WDSIZE_32;
+
 	*pDMA1_CONFIG = 0x7700 | WNR | WDSIZE_32;
+
 	
+
 	
+
 //--------------------------------------------------------
-//			 SPORT0 é–‹å§‹
-	// DMA é–‹å§‹ 
+
+//			 SPORT0 ŠJŽn
+
+	// DMA ŠJŽn 
+
 	*pDMA2_CONFIG |= DMAEN;
+
 	*pDMA1_CONFIG |= DMAEN;
+
 	asm("ssync;");
-	// SPORT2 é–‹å§‹ 
+
+	// SPORT2 ŠJŽn 
+
 	*pSPORT0_TCR1 |= TSPEN;
+
 	*pSPORT0_RCR1 |= RSPEN;
+
+
 
 //
 
+
+
 	while( 1 ){
+
 		int sample, slot, bufTx, bufRx;
+
 		struct CODEC_BUFFER * BufToBeTransmit; 
+
 	
-				// å—ä¿¡DMAçµ‚äº†å‰²ã‚Šè¾¼ã¿ã¨åŒæœŸ
+
+				// ŽóMDMAI—¹Š„‚èž‚Ý‚Æ“¯Šú
+
 		wai_sem( sport0_sem);
+
 	
-				// ãƒ—ãƒ­ã‚»ãƒƒã‚µãŒä½¿ã£ã¦ã‚ˆã„ãƒãƒƒãƒ•ã‚¡ã‚’å‰²ã‚Šå‡ºã™	
+
+				// ƒvƒƒZƒbƒT‚ªŽg‚Á‚Ä‚æ‚¢ƒoƒbƒtƒ@‚ðŠ„‚èo‚·	
+
 		bufTx = ( &tDescA == *pDMA2_NEXT_DESC_PTR) ? 0 : 1;
+
 		bufRx = ( &rDescA == *pDMA1_NEXT_DESC_PTR) ? 0 : 1;
+
 				
+
 		
+
 		processData(&RxBuffer[bufRx], &TxBuffer[bufTx]);
+
 				
+
 	}
 
+
+
 }
+
+
 

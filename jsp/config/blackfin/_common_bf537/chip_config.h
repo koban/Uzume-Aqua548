@@ -287,5 +287,12 @@ extern ER get_ims( IMS * p_ims );
 */
 extern void device_dispatcher(  unsigned int priority, unsigned int imask );
 
+
+/**
+ * スプリアス・イベント・ハンドラ
+ */
+void spurious_exc_handler(VP p_excinf);
+void spurious_int_handler();
+
 #endif /* _MACRO_ONLY */
 #endif /* _SYS_CONFIG_H_ */

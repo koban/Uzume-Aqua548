@@ -22,6 +22,7 @@
 #define ivg12Entry		_kernel_ivg12Entry
 #define ivg13Entry		_kernel_ivg13Entry
 #define ivg14Entry		_kernel_ivg14Entry
+#define enable_boot_for_gdb		_kernel_enable_boot_for_gdb
 
 #ifdef LABEL_ASM
 
@@ -44,6 +45,7 @@
 #define _ivg12Entry		__kernel_ivg12Entry
 #define _ivg13Entry		__kernel_ivg13Entry
 #define _ivg14Entry		__kernel_ivg14Entry
+#define _enable_boot_for_gdb		__kernel_enable_boot_for_gdb
 
 #endif /* LABEL_ASM */
 #endif /* _CPU_RENAME_H_ */

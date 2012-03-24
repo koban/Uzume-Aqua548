@@ -50,12 +50,12 @@
 
 #include "jsp_kernel.h"
 
-#include <defBF533.h>
+
 
 			// 割込み、例外からの戻りをリクエストする例外引数
 #define RETURNREQ 0xf
-
-#define CORETIMER_CTRL 0xFFE03000
+			// コアタイマーレジスタのアドレス
+#define TCNTL 0xFFE03000
 
 			// 32bit レジスタに即値をロードするマクロ
 #ifdef __GNUC__
@@ -72,10 +72,12 @@
 #include "saverestore.h"
 
 
+
 #ifdef __GNUC__
-.section .init;
+.section .start, "ax";
 .extern _boot_for_gdb;
 .extern __bss_start, __bss_end;
+.extern __init;
 #elif defined(__ECC__)
 .section program;
 #else
@@ -114,10 +116,6 @@ start:
 	L3 = R0;
     LOADLABEL( p0, ldf_stack_end )
     sp = p0;
-    
-    LOADVALUE( p0, CORETIMER_CTRL )		// koban 2010.2.2 
-    [ p0 ] = r0;						// koban 2010.2.2
-    
 #ifdef __GNUC__                 // bss領域の初期化
     LOADLABEL( r0, __bss_start) // bss開始番地
     LOADLABEL( r1, __bss_end )
@@ -129,20 +127,24 @@ start:
 loop_begin bssfill
         b[p0++] = r0;
 loop_end bssfill;
-			// call boot_for_debug
+			// boot_for_gdb()は定義されているか。
     LOADLABEL( p0, _boot_for_gdb )
     cc = p0 == 0;
-    if cc jump skip_boot_for_gdb;
-    r0 = 0;			// boot_for_gdbの debug 引数。0のとき、リセットしない。gdbを使うときには、1にする。
+    if cc jump skip_boot_for_gdb;	// 定義されていないならスキップ
     sp += -12;
     call (p0);     // gdbでロードしたときにリセットを確実にするためのコード
     sp += 12;
 skip_boot_for_gdb:
-
 #elif defined(__ECC__)
 #else
 #error "Compiler is not supported"
 #endif
+
+			// コアタイマーをディセーブルする
+    LOADVALUE( p0, TCNTL )
+    r0 = 0;
+    [p0] = r0;
+
 
 #ifdef USE_RUNTIME_INIT			// board_config.h を参照
 	sp += -12;
@@ -217,6 +219,7 @@ task_level:                     // ここからタスクの実行順位
 
     sp += -12;
 #ifdef __GNUC__					/* GCC */
+	call.x	__init;				/* 大域オブジェクトを初期化 */
 #elif defined(__ECC__)			/* VisualDSP++ */
 #ifdef INIT_C_PLUS_PLUS
     r0 = 0;
@@ -243,6 +246,13 @@ start.end:
 #elif defined(__ECC__)
 
 #ifdef INIT_C_PLUS_PLUS
+.section ctor;
+	.align 4;
+___ctor_table:
+	.byte4=0;
+.global ___ctor_table;
+.type ___ctor_table,STT_OBJECT;
+.extern ___ctorloop;
 .section .gdt;
         .align 4;
 ___eh_gdt:
@@ -255,16 +265,6 @@ ___eh_frt:
 .global ___eh_frt;
         .byte4=0;
 .type ___eh_frt,STT_OBJECT;
-___ctor_table:
-	.align 4;	
-	.byte4=0;
-___ctor_table.end:
-____ctor_table:
-.section ctor;
-	.align 4;
-.global ___ctor_table;
-.type ___ctor_table,STT_OBJECT;
-.extern ___ctorloop;
 #endif  /* INIT_C_PLUS_PLUS */
 
 #else

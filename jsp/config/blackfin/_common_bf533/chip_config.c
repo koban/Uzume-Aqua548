@@ -47,7 +47,7 @@
 
 #include "jsp_kernel.h"
 #include <sil.h>
-
+#include <cdefBF533.h>
 
 
 #define SYSCFG_VALUE 0x36
@@ -60,6 +60,20 @@ sys_initialize()
 {
 	// BF531/2/3のアノーマリー対策 rev 0.1, 0.2用
 	Asm( "SYSCFG=%0;"  : :"d"(SYSCFG_VALUE) ) ;
+
+	/*
+	 * スプリアス割り込みハンドラの設定
+	 *
+	 * cpu_initialize()が行うダミーの割り込みハンドラの設定を上書きする。
+	 * アプリケーションが割り込みハンドラを設定すると、以下の設定も上書き
+	 * される。
+	 */
+	int i;
+
+	for ( i=0; i<DEVICE_INTERRUPT_COUNT+3; i++ )
+		dev_vector[i] = &spurious_int_handler;
+
+	exc_vector = &spurious_exc_handler;
 
 	/*
 	 *  PLLの設定
@@ -100,6 +114,29 @@ sys_initialize()
 		asm("cli r0; csync; idle; sti r0;": : :"R0");
 		*__pSIC_IWR = 0xFFFFFFFF;	// IWR_ENABLE_ALL;
 	}
+
+	    /*
+	     *  UART分周比の設定
+	     *
+	     *  Logtaskが動作する前にsys_putc()を使うための設定を行う
+	     */
+#define	DLAB 0x80
+
+			/* Blackfin 固有の設定。UARTイネーブル */
+	    *pUART_GCTL = 1;
+
+			/* クロックの設定 */
+		*pUART_LCR |= DLAB;
+		*pUART_DLL = UART0_DIVISOR & 0xFF ;
+		*pUART_DLH = UART0_DIVISOR >> 8;
+		*pUART_LCR &= ~DLAB;
+
+			/* モード設定, パリティ無し 8bit data, 1 stop bit */
+	    *pUART_LCR = 0x03;
+
+			/* 割込み禁止 */
+	    *pUART_IER = 0;
+
 
 }
 
@@ -287,6 +324,13 @@ sys_exit()
 void
 sys_putc(char c)
 {
+	if ( c== 0x0A )			/* もし LF ならば */
+		sys_putc( 0x0D );	/* CRを一文字送信 */
+
+	while( !( *pUART_LSR & (1<<5)) )
+		;		/* UART0 LSRのTHREが1になるまで待つ。1ならば送信レジスタ空き。*/
+
+	*pUART_THR = c;	/* 一文字送信 */
 }
 
 

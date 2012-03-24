@@ -1,16 +1,31 @@
-Talkthrough ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ READ ME
-2005.Jun.10 é…”æ¼¢
+Talkthrough ƒAƒvƒŠƒP[ƒVƒ‡ƒ“ READ ME
 
-TOPPERS/JSP 1.4.1 for Blackfin ãƒ™ãƒ¼ã‚¹ã® Talkthrough ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã§ã™ã€‚å…¨ä½“ã¯3ã¤ã®éƒ¨åˆ†ã‹ã‚‰æ§‹æˆã•ã‚Œã¦ã„ã¾ã™ã€‚
+2005.Jun.10 ŒŠ¿
+
+
+
+TOPPERS/JSP 1.4.1 for Blackfin ƒx[ƒX‚Ì Talkthrough ƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚Å‚·B‘S‘Ì‚Í3‚Â‚Ì•”•ª‚©‚ç\¬‚³‚ê‚Ä‚¢‚Ü‚·B
+
+
 
 - config\blackfin-vdsp\bf533\libkernel.dpj
+
 - _libs\ad1836a.dpj
+
 - _applications\talkthrough.dpj
 
-ã“ã‚Œã‚‰ã®ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã¯_applications\talkthrough\talkthrough.dpg ã«å«ã¾ã‚Œã¦å±…ã¾ã™ã€‚
 
-ãƒ“ãƒ«ãƒ‰ç’°å¢ƒ
+
+‚±‚ê‚ç‚ÌƒvƒƒWƒFƒNƒg‚Í_applications\talkthrough\talkthrough.dpg ‚ÉŠÜ‚Ü‚ê‚Ä‹‚Ü‚·B
+
+
+
+ƒrƒ‹ƒhŠÂ‹«
+
 - VisualDSP++ 4.0 2005 March Update
+
 - EZ-KIT Lite BF533 Rev 1.5, Chip Rev 0.2
 
-è©³ç´°ã¯ http://adsp2191.hp.infoseek.co.jp/ ã¾ã§ã€‚
+
+
+Ú×‚Í http://adsp2191.hp.infoseek.co.jp/ ‚Ü‚ÅB

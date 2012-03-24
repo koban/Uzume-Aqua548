@@ -2,12 +2,12 @@
  *  TOPPERS/JSP Kernel
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Just Standard Profile Kernel
- * 
+ *
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
  *  Copyright (C) 2003-2004 by Takagi Nobuhisa
- * 
- *  上記著作権者は，以下の (1)〜(4) の条件か，Free Software Foundation 
+ *
+ *  上記著作権者は，以下の (1)〜(4) の条件か，Free Software Foundation
  *  によって公表されている GNU General Public License の Version 2 に記
  *  述されている条件を満たす場合に限り，本ソフトウェア（本ソフトウェア
  *  を改変したものを含む．以下同じ）を使用・複製・改変・再配布（以下，
@@ -28,13 +28,13 @@
  *        報告すること．
  *  (4) 本ソフトウェアの利用により直接的または間接的に生じるいかなる損
  *      害からも，上記著作権者およびTOPPERSプロジェクトを免責すること．
- * 
+ *
  *  本ソフトウェアは，無保証で提供されているものである．上記著作権者お
  *  よびTOPPERSプロジェクトは，本ソフトウェアに関して，その適用可能性も
  *  含めて，いかなる保証も行わない．また，本ソフトウェアの利用により直
  *  接的または間接的に生じたいかなる損害に関しても，その責任を負わない．
- * 
- *  @(#) $Id: newlibrt.c,v 1.1 2009/01/31 05:27:37 suikan Exp $
+ *
+ *  @(#) $Id: newlibrt.c,v 1.2 2010/05/02 04:43:52 suikan Exp $
  */
 #include <stddef.h>
 #include <reent.h>
@@ -66,109 +66,7 @@ void __malloc_unlock(struct _reent *ptr)
 	ena_dsp();
 }
 
-void *_sbrk_r(struct _reent *ptr, ptrdiff_t nbyte)
-{
-	extern char end;
-	static char *heap_ptr = &end;
-	static char *heap_end = (char*)HEAP_TOP;
-	char *base;
 
-	if (!iniflg)
-	{
-		volatile char _auto;
-		if (&end < &_auto && &_auto < heap_end)
-			heap_end = (char*)&_auto;
-	}
 
-	if (heap_ptr + nbyte + 32 > heap_end)
-	{
-		ptr->_errno = errno = ENOMEM;
-		return (void*)-1;
-	}
 
-	base = heap_ptr;
-	heap_ptr += nbyte;
-	return base;
-}
-
-/*
- *	For program termination
- */
-#define	ATEXIT_MAX	(32 + 1)
-
-static void (*atexit_table[ATEXIT_MAX])(void);
-static int atexit_num;
-
-/*
- * abort時に最初に呼出されるフック
- * raise(SIGABRT)を呼出すようにすれば、ホスト環境との互換をとることが可能になる。
- */
-void (*_atabort)(void) = 0;
-
-int atexit(void (*func)(void))
-{
-	int result = -1;
-	int sync = iniflg;
-
-	if (sync)
-		loc_cpu();
-
-	if (atexit_num < ATEXIT_MAX)
-	{
-		atexit_table[atexit_num++] = func;
-		result = 0;
-	}
-
-	if (sync)
-		unl_cpu();
-
-	return result;
-}
-
-void exit(int status)
-{
-	if (iniflg)
-		kernel_exit();
-	_exit(status);
-}
-
-void abort(void)
-{
-	if (_atabort != 0)
-		(*_atabort)();
-	if (iniflg)
-		kernel_abort();
-	_exit(3);
-}
-
-/*
- *	For software hooks
- */
-void software_init_hook(void)
-{
-	extern void _toppers_cxxrt_init(void);
-	_toppers_cxxrt_init();
-	{
-#ifdef	__ELF__
-		extern void _init(void);
-		extern void _fini(void);
-		atexit(_fini);
-		_init();
-#else
-		extern void __main(void);
-		__main();
-#endif
-	}
-}
-
-void software_term_hook(void)
-{
-	int i;
-
-	for (i = atexit_num - 1; i >= 0; i--)
-		(*atexit_table[i])();
-}
-
-/* リンク解決用のダミー */
-int main() { return 0; }
 

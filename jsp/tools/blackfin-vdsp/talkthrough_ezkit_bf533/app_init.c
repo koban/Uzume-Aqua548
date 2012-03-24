@@ -1,32 +1,64 @@
 #include "t_services.h"
+
 #include "talkthrough.h"
+
 #include "kernel_id.h"
+
 #include <cdefBF53x.h>
 
+
+
 #define pFLASHA_PORTA_OUT ((volatile unsigned char * )0x20270004)
+
 #define pFLASHA_PORTA_DIR ((volatile unsigned char * )0x20270006)
+
 #define pFLASHA_PORTB_OUT ((volatile unsigned char * )0x20270005)
+
 #define pFLASHA_PORTB_DIR ((volatile unsigned char * )0x20270007)
+
 #define pLED pFLASHA_PORTB_OUT
 
+
+
 //------------------------------------------------
-// AD1836a ç”¨ã®IDè¨­å®š
+
+// AD1836a —p‚ÌIDİ’è
+
 //
+
 //------------------------------------------------
+
 //const int codec_rx_dtq = CODEC_RX_DTQ;
+
 //const int codec_tx_dtq = CODEC_TX_DTQ;
+
 const int spi_sem = SPI_SEM;
+
 const int sport0_sem =SPORT0_SEM;
+
 //------------------------------------------------
+
+
+
+
 
 
 
 void app_init(VP_INT vp_int)
-{
-    *pEBIU_AMBCTL0 = 0x7bb07bb0;  // éåŒæœŸãƒãƒ¼ãƒˆ0,1ã®åˆæœŸåŒ–
-    *pEBIU_AMBCTL1 = 0x7bb07bb0;  // éåŒæœŸãƒãƒ¼ãƒˆ2,3ã®åˆæœŸåŒ–
-    *pEBIU_AMGCTL  = 0x000f;      // å…¨éåŒæœŸãƒãƒ¼ãƒˆã‚’ã‚¤ãƒãƒ¼ãƒ–ãƒ«
 
-    *pFLASHA_PORTB_DIR = 0x3f;    // bit0-5ã‚’å‡ºåŠ›ã«
-    *pFLASHA_PORTB_OUT = 0x00;    // LED ã‚ªãƒ•	
+{
+
+    *pEBIU_AMBCTL0 = 0x7bb07bb0;  // ”ñ“¯Šúƒ|[ƒg0,1‚Ì‰Šú‰»
+
+    *pEBIU_AMBCTL1 = 0x7bb07bb0;  // ”ñ“¯Šúƒ|[ƒg2,3‚Ì‰Šú‰»
+
+    *pEBIU_AMGCTL  = 0x000f;      // ‘S”ñ“¯Šúƒ|[ƒg‚ğƒCƒl[ƒuƒ‹
+
+
+
+    *pFLASHA_PORTB_DIR = 0x3f;    // bit0-5‚ğo—Í‚É
+
+    *pFLASHA_PORTB_OUT = 0x00;    // LED ƒIƒt	
+
 }
+

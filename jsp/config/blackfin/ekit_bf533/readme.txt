@@ -11,6 +11,3 @@ Makefile.configは、インクルード・パスおよびソースファイル�
 - sys_config.h : システム依存部のうち、アプリケーションから見えない宣言
 - sys_defs.h : システム依存部のうち、アプリケーションから見える宣言
 
-E!Kit-BF533は、外部Flash ROMからNo BootでU-BOOTを起動する。このため、boot_for_debug()
-ルーチンを呼ぶと、U-BOOTもろとも再起動してしまう。これを防ぐために、
-config/blackfin/_common_bf533/chip_debugboot.c をリンク対象から外してある。

@@ -56,6 +56,11 @@
 
 #define BLACKFIN			/* プロセッサ略称 */
 
+#define COPYRIGHT_CPU \
+"Copyright (C) 2004-2012 by TOPPERS/JSP for Blackfin project\n"\
+"            http://sourceforge.jp/projects/toppersjsp4bf/\n"
+
+
 /*
  * Core MMR
  */

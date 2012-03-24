@@ -56,6 +56,16 @@
 */
 VP event_fp;
 
+/*
+ * GDBでデバッグ時にブートを行うかどうか制御する変数
+ * 通常は偽なので、ロード後、gdbで1に修正して使う
+ */
+#ifdef __GNUC__
+unsigned int enable_boot_for_gdb  __attribute__((section(".data"), used)) = 0;
+#elif defined(__ECC__)
+#else
+#error "Compiler is not supported"
+#endif
 
 static void dummy_exception_handler(VP exc_info);
 void (* exc_vector)(VP) = &dummy_exception_handler;

@@ -54,6 +54,8 @@
 #ifndef _CHIP_DEFS_H_
 #define _CHIP_DEFS_H_
 
+ /* チップ共通部略称 　jsp/doc/config.txtの 2.(8)を参照 */
+#define _COMMON_BF533
 
 /*
  * システム MMRの定義
@@ -130,7 +132,7 @@
  */
 
 Inline void
-kernel_abort(void)
+kernel_abort()
 {
 }
 

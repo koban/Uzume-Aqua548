@@ -1,4 +1,4 @@
-Analog Devices製 KOBANZAME対応システム依存部。
+J-Person製 J-DSP-BF533SEB (KOBANZAME) 対応システム依存部。
 
 sys_config.hとsys_defs.hは、#include_nextを使って、それぞれblackfin/_common_bf533/sys_config.h
 とblackfin/_common_bf533/sys_defs.hを読み込んでいる。

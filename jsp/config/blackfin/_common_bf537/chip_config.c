@@ -47,7 +47,7 @@
 
 #include "jsp_kernel.h"
 #include <sil.h>
-
+#include <cdefBF537.h>
 
 
 /*
@@ -56,6 +56,21 @@
 void
 sys_initialize()
 {
+
+	/*
+	 * スプリアス割り込みハンドラの設定
+	 *
+	 * cpu_initialize()が行うダミーの割り込みハンドラの設定を上書きする。
+	 * アプリケーションが割り込みハンドラを設定すると、以下の設定も上書き
+	 * される。
+	 */
+	int i;
+
+	for ( i=0; i<DEVICE_INTERRUPT_COUNT+3; i++ )
+		dev_vector[i] = &spurious_int_handler;
+
+	exc_vector = &spurious_exc_handler;
+
 
 	/*
 	 *  PLLの設定
@@ -88,7 +103,27 @@ sys_initialize()
 		asm("cli r0; csync; idle; sti r0;": : :"R0");
 		*__pSIC_IWR = 0xFFFFFFFF; // IWR_ENABLE_ALL;
 	}
+	    /*
+	     *  UART分周比の設定
+	     *
+	     *  Logtaskが動作する前にsys_putc()を使うための設定を行う
+	     */
+#define	DLAB 0x80
 
+			/* Blackfin 固有の設定。UARTイネーブル */
+	    *pUART0_GCTL = 1;
+
+			/* クロックの設定 */
+		*pUART0_LCR |= DLAB;
+		*pUART0_DLL = UART0_DIVISOR & 0xFF ;
+		*pUART0_DLH = UART0_DIVISOR >> 8;
+		*pUART0_LCR &= ~DLAB;
+
+			/* モード設定, パリティ無し 8bit data, 1 stop bit */
+	    *pUART0_LCR = 0x03;
+
+			/* 割込み禁止 */
+	    *pUART0_IER = 0;
 }
 
         // priority_maskは、event順位0..15に応じた
@@ -281,6 +316,13 @@ sys_exit()
 void
 sys_putc(char c)
 {
+	if ( c== 0x0A )			/* もし LF ならば */
+		sys_putc( 0x0D );	/* CRを一文字送信 */
+
+	while( !( *pUART0_LSR & (1<<5)) )
+		;		/* UART0 LSRのTHREが1になるまで待つ。1ならば送信レジスタ空き。*/
+
+	*pUART0_THR = c;	/* 一文字送信 */
 }
 
 

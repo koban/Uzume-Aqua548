@@ -165,7 +165,7 @@ typedef struct task_context_block {
  */
 
 Inline BOOL
-sense_context(void)
+sense_context()
 {
 	return( *__pIPEND & 0x7FEF );
 }
@@ -175,7 +175,7 @@ sense_context(void)
 * よるロック状態は、このsense_lock()では無視する。
 */
 Inline BOOL
-sense_lock(void)
+sense_lock()
 {
 #ifdef UNMANAGED_INT
 	return((*__pIMASK & ~UNMANAGED_INT )== 0xC01F );
@@ -283,6 +283,11 @@ extern void	dispatch(void);
  */
 extern void	exit_and_dispatch(void);
 
+
+/*
+ * ブート時にシステムリセットをするなら真。デフォルトでは偽。
+ */
+extern unsigned int enable_boot_for_gdb;
 /*
  *  割込みハンドラ／CPU例外ハンドラの設定
  */

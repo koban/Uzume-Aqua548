@@ -130,7 +130,7 @@
 /*
  *  起動メッセージのターゲットシステム名
  */
-#define	TARGET_NAME	"EZ-KIT Lite BF533"
+#define	TARGET_NAME	"BF533CB"
 
 
 /*

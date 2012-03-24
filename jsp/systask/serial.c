@@ -45,10 +45,7 @@
 #include <t_services.h>
 #include <serial.h>
 #include <hw_serial.h>
-
-#ifndef TARGET_TOOL
 #include "kernel_id.h"
-#endif
 
 /*
  *  バッファサイズとフロー制御に関連する定数
@@ -75,9 +72,6 @@ typedef struct serial_port_initialization_block {
 	ID	snd_semid;	/* 送信バッファ管理用セマフォのID */
 } SPINIB;
 
-/*--------------------------------------------------------*/
-/*-- modified koban 2010.01.02 ----------------------------*/
-#ifndef TARGET_TOOL
 static const SPINIB spinib_table[TNUM_PORT] = {
 	{ SERIAL_RCV_SEM1, SERIAL_SND_SEM1 }
 #if TNUM_PORT >= 2
@@ -87,17 +81,7 @@ static const SPINIB spinib_table[TNUM_PORT] = {
 	,{ SERIAL_RCV_SEM3, SERIAL_SND_SEM3 }
 #endif
 };
-#else
-static SPINIB spinib_table[TNUM_PORT];
 
-void KzAttIniJspSerial( ID rx, ID tx )
-{
-	spinib_table[0].rcv_semid = rx;
-	spinib_table[0].snd_semid = tx;
-}
-
-#endif
-/*--------------------------------------------------------*/
 /*
  *  シリアルポート管理ブロック
  */

@@ -1,1 +1,1 @@
-d:\bin\cfg.exe talkthrough.cfg 
+d:\bin\cfg.exe talkthrough.cfg 

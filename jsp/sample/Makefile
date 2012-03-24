@@ -35,7 +35,7 @@
 #  含めて，いかなる保証も行わない．また，本ソフトウェアの利用により直
 #  接的または間接的に生じたいかなる損害に関しても，その責任を負わない．
 # 
-#  @(#) $Id: Makefile,v 1.1.6.3 2009/07/26 02:13:30 suikan Exp $
+#  @(#) $Id: Makefile,v 1.8 2012/01/21 02:32:02 suikan Exp $
 # 
 
 #
@@ -56,8 +56,8 @@ TOOL = @(TOOL)
 PROGRAM_LANG = @(LANG)
 ifeq ($(PROGRAM_LANG),c++)
     USE_CXX = true
-    CXXLIBS = -lstdc++ -lm -lc 
-    CXXRTS  = cxxrt.o newlibrt.o
+    CXXLIBS = 
+    CXXRTS  = cxxrt.o  newlibrt.o cpu_malloc.o
 endif
 
 #
@@ -104,7 +104,7 @@ COPTS := $(COPTS)
 CDEFS := $(CDEFS)
 INCLUDES := -I. -I$(SRCDIR)/include $(INCLUDES)
 LDFLAGS := -nostdlib $(LDFLAGS)
-LIBS := $(LIBS) $(CXXLIBS) -lgcc
+LIBS := $(LIBS) $(CXXLIBS) -lgcc 
 CFLAGS = $(COPTS) $(CDEFS) $(INCLUDES)
 
 #
@@ -242,7 +242,7 @@ KERNEL_LIB_OBJS = $(KERNEL_ASMOBJS) $(KERNEL_COBJS) $(KERNEL_LCOBJS)
 STASK_OBJS = $(STASK_ASMOBJS) $(STASK_COBJS)
 UTASK_OBJS = $(UTASK_ASMOBJS) $(UTASK_COBJS) $(UTASK_CXXOBJS)
 TASK_OBJS = $(UTASK_OBJS) $(STASK_OBJS) kernel_cfg.o
-ALL_OBJS = $(START_OBJS) $(TASK_OBJS) $(END_OBJS)
+ALL_OBJS = $(START_OBJS) $(CXX_BEGIN_OBJS) $(TASK_OBJS) $(CXX_END_OBJS) $(END_OBJS) 
 ALL_LIBS = $(UTASK_LIBS) $(STASK_LIBS) $(LIBKERNEL) $(LIBS)
 
 ifdef TEXT_START_ADDRESS
@@ -269,9 +269,8 @@ libkernel.a: $(OFFSET_H) $(KERNEL_LIB_OBJS)
 #
 $(OBJFILE): Makefile.depend $(ALL_OBJS) $(MAKE_KERNEL) $(OBJNAME).chk
 	$(LINK) $(CFLAGS) $(LDFLAGS) -o $(OBJFILE) \
-			$(START_OBJS) $(TASK_OBJS) $(ALL_LIBS) $(END_OBJS)
+			$(START_OBJS) $(CXX_BEGIN_OBJS) $(TASK_OBJS) $(ALL_LIBS) $(CXX_END_OBJS) $(END_OBJS)
 	$(NM) $(OBJFILE) > $(OBJNAME).syms
-	$(OBJCOPY) -R .bss.sysmmr -R .bss.coremmr $(OBJFILE)
 	$(OBJCOPY) -O srec -S $(OBJFILE) $(OBJNAME).srec
 	$(SRCDIR)/cfg/chk -m $(OBJNAME).syms,$(OBJNAME).srec \
 			-obj -cs $(OBJNAME).chk -cpu $(CPU) -system $(SYS)

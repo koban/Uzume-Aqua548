@@ -2,7 +2,7 @@
  *  TOPPERS/JSP Kernel
  *      Toyohashi Open Platform for Embedded Real-Time Systems/
  *      Just Standard Profile Kernel
- * 
+ *
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
  *
@@ -11,7 +11,7 @@
  *  Copyright (C) 2004,2006,2006 by Takemasa Nakamura
  *  Copyright (C) 2004 by Ujinosuke
  *
- *  上記著作権者は，以下の (1)〜(4) の条件か，Free Software Foundation 
+ *  上記著作権者は，以下の (1)〜(4) の条件か，Free Software Foundation
  *  によって公表されている GNU General Public License の Version 2 に記
  *  述されている条件を満たす場合に限り，本ソフトウェア（本ソフトウェア
  *  を改変したものを含む．以下同じ）を使用・複製・改変・再配布（以下，
@@ -32,18 +32,18 @@
  *        報告すること．
  *  (4) 本ソフトウェアの利用により直接的または間接的に生じるいかなる損
  *      害からも，上記著作権者およびTOPPERSプロジェクトを免責すること．
- * 
+ *
  *  本ソフトウェアは，無保証で提供されているものである．上記著作権者お
  *  よびTOPPERSプロジェクトは，本ソフトウェアに関して，その適用可能性も
  *  含めて，いかなる保証も行わない．また，本ソフトウェアの利用により直
  *  接的または間接的に生じたいかなる損害に関しても，その責任を負わない．
- * 
- *  
+ *
+ *
  */
 
 
 /*
- *	ターゲットシステムに依存する定義（KOBANZAME用）
+ *	ターゲットシステムに依存する定義（BF533CB用）
  *
  *  このインクルードファイルは，kernel.h と sil.h でインクルードされる．
  *  他のファイルから直接インクルードすることはない．このファイルをイン
@@ -58,7 +58,7 @@
 #include <chip_defs.h>
 
  /* システム略称 　jsp/doc/config.txtの 2.(8)を参照 */
-#define BF533CB
+#define KOBANZAME
 
 
 /*
@@ -76,6 +76,6 @@
  *  宣言しない場合は、デフォルトで外部ペリフェラルはすべて
  *  破壊性読み出しとして扱われる
  */
-// #define DESTRUCTIVE_READ( iop ) (iop<(VP)0xF0000000) 
+// #define DESTRUCTIVE_READ( iop ) (iop<(VP)0xF0000000)
 
 #endif /* _SYS_DEFS_H_ */

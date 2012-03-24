@@ -35,7 +35,7 @@
  *  含めて，いかなる保証も行わない．また，本ソフトウェアの利用により直
  *  接的または間接的に生じたいかなる損害に関しても，その責任を負わない．
  * 
- *  @(#) $Id: banner.c,v 1.1 2009/01/31 05:27:37 suikan Exp $
+ *  @(#) $Id: banner.c,v 1.2 2012/01/21 04:18:24 suikan Exp $
  */
 
 /*
@@ -48,6 +48,10 @@
 #define COPYRIGHT_CPU
 #endif /* COPYRIGHT_CPU */
 
+#ifndef COPYRIGHT_CHIP
+#define COPYRIGHT_CHIP
+#endif /* COPYRIGHT_CHIP */
+
 #ifndef COPYRIGHT_SYS
 #define COPYRIGHT_SYS
 #endif /* COPYRIGHT_SYS */
@@ -59,7 +63,7 @@ static const char banner[] = "\n"
 "                            Toyohashi Univ. of Technology, JAPAN\n"
 "Copyright (C) 2004-2006 by Embedded and Real-Time Systems Laboratory\n"
 "            Graduate School of Information Science, Nagoya Univ., JAPAN\n"
-COPYRIGHT_CPU COPYRIGHT_SYS;
+COPYRIGHT_CPU COPYRIGHT_CHIP COPYRIGHT_SYS;
 
 void
 print_banner()

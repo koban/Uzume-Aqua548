@@ -6,7 +6,7 @@
  *  Copyright (C) 2000-2003 by Embedded and Real-Time Systems Laboratory
  *                              Toyohashi Univ. of Technology, JAPAN
  * 
- *  上記著作権者は，以下の (1)〜(4) の条件か，Free Software Foundation 
+ *  上記著作権者は，以下の (1)～(4) の条件か，Free Software Foundation 
  *  によって公表されている GNU General Public License の Version 2 に記
  *  述されている条件を満たす場合に限り，本ソフトウェア（本ソフトウェア
  *  を改変したものを含む．以下同じ）を使用・複製・改変・再配布（以下，
@@ -36,7 +36,7 @@
  */
 
 /*
- *   ADSP-BF533 UART用 簡易SIOドライバ
+ *   ADSP-BF533/BF50x/BF54x UART用 簡易SIOドライバ
  *
  *   このファイルは、TOPPERS/JSP 1.4.2の pdic/simple_sio/st16c2550.cを
  *   リネームし、内部の識別子を変更したものである。
@@ -52,6 +52,28 @@
  * UART_BOUNDARYはsys_config.hで定義する。
  */
 
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+/*
+ * BF50x/BF54xのUARTは、他のBlackfinプロセッサと以下の違いがあるため、定義を区別する。
+ * 1) レジスタ配置が違う
+ * 2) IER が SET と CLEARに分かれている
+ */
+
+#define UART_DLL   (0x00 * UART_BOUNDARY)   /*  分周レジスタ下位バイト       */
+#define UART_DLM   (0x01 * UART_BOUNDARY)   /*  分周レジスタ上位バイト       */
+#define UART_GCTL  (0x02 * UART_BOUNDARY)   /*  Blackfinのみ。グローバル制御レジスタ */
+#define UART_LCR   (0x03 * UART_BOUNDARY)   /*  ライン制御レジスタ */
+#define UART_MCR   (0x04 * UART_BOUNDARY)   /*  モデム制御レジスタ */
+#define UART_LSR   (0x05 * UART_BOUNDARY)   /*  ライン・ステータス・レジスタ */
+#define UART_MSR   (0x06 * UART_BOUNDARY)   /*  モデム・ステータス・レジスタ */
+#define UART_SCR   (0x07 * UART_BOUNDARY)   /*  スクラッチ・パッド・レジスタ */
+#define UART_IER_S (0x08 * UART_BOUNDARY)   /*  割込みイネーブルレジスタ       */
+#define UART_IER_C (0x09 * UART_BOUNDARY)   /*  割込みイネーブルレジスタ       */
+#define UART_THR   (0x0A * UART_BOUNDARY)   /*  送信データ・ホールド・レジスタ */
+#define UART_RBR   (0x0B * UART_BOUNDARY)   /*  受信バッファレジスタ  */
+
+#else /* _COMMON_BF506 || _COMMON_BF548 */
+/* BF50x/BF54x 以外のプロセッサは以下の定義を使用する。*/
 
 #define UART_RBR   (0x00 * UART_BOUNDARY)   /*  受信バッファレジスタ  */
 #define UART_THR   (0x00 * UART_BOUNDARY)   /*  送信データ・ホールド・レジスタ */
@@ -66,6 +88,8 @@
 #define UART_MSR   (0x06 * UART_BOUNDARY)   /*  モデム・ステータス・レジスタ */
 #define UART_SCR   (0x07 * UART_BOUNDARY)   /*  スクラッチ・パッド・レジスタ */
 #define UART_GCTL  (0x09 * UART_BOUNDARY)	  /*  Blackfinのみ。グローバル制御レジスタ */
+
+#endif
 
 /*
  * レジスタのビットマスク。特殊機能を追加しない限り、書き換えなくてよい。
@@ -260,8 +284,13 @@ uart_putchar(SIOPCB *siopcb, UB c)
 Inline void
 uart_enable_send(SIOPCB *siopcb)
 {
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_S, IER_TX);
+#else
     uart_write(siopcb->siopinib->reg_base, UART_IER,
                 (uart_read(siopcb->siopinib->reg_base,UART_IER) | IER_TX));
+#endif
 }
 
 /*
@@ -270,9 +299,13 @@ uart_enable_send(SIOPCB *siopcb)
 Inline void
 uart_disable_send(SIOPCB *siopcb)
 {
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_C, IER_TX);
+#else
     uart_write(siopcb->siopinib->reg_base, UART_IER,
                 (uart_read(siopcb->siopinib->reg_base, UART_IER) & ~IER_TX));
-                
+#endif
 }
 
 /*
@@ -281,8 +314,13 @@ uart_disable_send(SIOPCB *siopcb)
 Inline void
 uart_enable_rcv(SIOPCB *siopcb)
 {
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_S, IER_RX);
+#else
     uart_write(siopcb->siopinib->reg_base, UART_IER,
                 (uart_read(siopcb->siopinib->reg_base,UART_IER) | IER_RX));
+#endif
 }
 
 /*
@@ -291,9 +329,13 @@ uart_enable_rcv(SIOPCB *siopcb)
 Inline void
 uart_disable_rcv(SIOPCB *siopcb)
 {
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_C, IER_RX);
+#else
     uart_write(siopcb->siopinib->reg_base, UART_IER,
                 (uart_read(siopcb->siopinib->reg_base, UART_IER) & ~IER_RX));
-                
+#endif
 }
 
 
@@ -347,7 +389,12 @@ uart_init_siopinib(const SIOPINIB *siopinib)
     uart_write(siopinib->reg_base, UART_LCR, LCR_NP_8_1);
 
     /* 割込み禁止 */
-    uart_write(siopinib->reg_base, UART_IER, 0x00);
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopinib->reg_base, UART_IER_C, 0xFFU);
+#else
+	uart_write(siopinib->reg_base, UART_IER, 0x00);
+#endif
 }
 
 
@@ -400,10 +447,15 @@ uart_opn_por(ID siopid, VP_INT exinf)
      */
     uart_init_siopinib(siopcb->siopinib);
     
-    /* 受信割込み許可 */
-    uart_write(siopcb->siopinib->reg_base, UART_IER, IER_RX);
-    
-    /* 割込み線をイネーブル */
+	/* 受信割込み許可 */
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_S, IER_RX);
+#else
+	uart_write(siopcb->siopinib->reg_base, UART_IER, IER_RX);
+#endif
+
+	/* 割込み線をイネーブル */
     uart_write(siopcb->siopinib->reg_base, UART_MCR, MCR_INT_ENABLE);
 
     siopcb->exinf = exinf;
@@ -420,7 +472,12 @@ void
 uart_cls_por(SIOPCB *siopcb)
 {
     /* 割込み禁止 */
-    uart_write(siopcb->siopinib->reg_base, UART_IER, 0x00);   
+#if defined(_COMMON_BF506) || defined(_COMMON_BF548)
+	/* BF50x/BF54xの場合 */
+    uart_write(siopcb->siopinib->reg_base, UART_IER_C, 0xFFU);
+#else
+	uart_write(siopcb->siopinib->reg_base, UART_IER, 0x00);
+#endif
     siopcb->openflag = FALSE;
 }
 

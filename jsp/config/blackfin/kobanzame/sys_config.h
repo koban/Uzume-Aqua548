@@ -125,12 +125,12 @@
  * 初期化コードを実行する。また、C++言語用のテーブルを宣言する
  *
 */
-#define INIT_C_PLUS_PLUS
+// #define INIT_C_PLUS_PLUS
 
 /*
  *  起動メッセージのターゲットシステム名
  */
-#define	TARGET_NAME	"KOBANZAME"
+#define	TARGET_NAME	"KOBANZAME (J-DSP-BF533SEB)"
 
 
 /*
@@ -152,7 +152,6 @@
 
 /*  UART0のボーレート． */
 #define UART0_BAUD_RATE 57600		/* 57600 baud */
-//#define UART0_BAUD_RATE 19200		/* 57600 baud */
 
 /*
  * PLLの初期化の強制

@@ -36,7 +36,7 @@
 #  含めて，いかなる保証も行わない．また，本ソフトウェアの利用により直
 #  接的または間接的に生じたいかなる損害に関しても，その責任を負わない．
 # 
-#  @(#) $Id: makedep,v 1.1 2009/01/31 05:27:37 suikan Exp $
+#  @(#) $Id: makedep,v 1.2 2011/11/24 06:03:41 maduki Exp $
 # 
 
 require "getopt.pl";
@@ -125,7 +125,8 @@ sub makedepend_one {
 	while ($line = <INPUT>) {
 		if ($line =~ /^\#\s*([0-9]+)\s*\"([^\"]+)\"/) {
 			$filename = $2;
-			$filename =~ s/ /\\ /;
+#			$filename =~ s/ /\\ /;
+			$filename =~ s/ /\\ /g;
 			if ($filename !~ /^\<.*\>$/ && $filename !~ /\/$/) {
 				$dependlist{$filename} = 1;
 			}

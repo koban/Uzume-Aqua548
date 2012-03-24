@@ -21,7 +21,7 @@
 
 /*--- include -----------------------------------*/
 #include "kernel.h"
-#include "cdefBF533.h"
+#include "cdefBF548.h"
 
 
 /*--- sdk private functions ---------------------*/

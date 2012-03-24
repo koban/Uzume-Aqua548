@@ -253,6 +253,12 @@ typedef unsigned int IMS;
 extern ER chg_ims( IMS ims );
 extern ER get_ims( IMS * p_ims );
 
+/**
+ * スプリアス・イベント・ハンドラ
+ */
+void spurious_exc_handler(VP p_excinf);
+void spurious_int_handler();
+
 /*
  * 割り込みを起こしたデバイスを調べる
 */

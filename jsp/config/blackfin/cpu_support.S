@@ -202,6 +202,7 @@ _exit_and_dispatch.end:
 
 	.global _activate_r;
 _activate_r:
+	fp = 0;
 	r1 = 0xffff(z);
     cli r0;         // 現在のマスクを取り出す。
                         // 管理外割り込みを使わないときにも、割り込み禁止のためcliが必要

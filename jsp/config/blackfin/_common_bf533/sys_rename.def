@@ -2,3 +2,5 @@ make_priority_mask
 device_dispatcher
 boot_for_gdb
 siopinib_table
+sprious_int_handler
+sprious_exp_handler

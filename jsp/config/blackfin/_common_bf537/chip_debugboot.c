@@ -10,10 +10,11 @@
 *
 * なお、パラメータ debugが FALSEの場合、リセットはしない
 */
-void boot_for_gdb(BOOL debug)
+void boot_for_gdb(void)
 {
 	// RESET_SOFTWARE		0x8000
-	if ( ! (*__pSWRST & 0x8000 /*RESET_SOFTWARE*/ ) && debug ){   /* ソフトウェアリセットが起きていないなら以下実行　*/
+	if ( enable_boot_for_gdb ){
+		enable_boot_for_gdb = 0;			/* rebootは一回だけ*/
         *__pSWRST = 0x07;                     /* 内蔵ペリフェラルのリセット　*/
         asm volatile( "ssync;" );
         *__pSWRST = 0x00;                     /* 内蔵ペリフェラルのリセット解除。 */
