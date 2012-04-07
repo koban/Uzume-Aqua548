@@ -37,7 +37,7 @@ static BOOL		mbActivated = FALSE;
 void	kzdev_mems_att_ini(void)
 {
 	mSpiDesc = kzdev_spi_regist( KZDEV_SPI_16BIT, 500000,5, FALSE, TRUE );	
-	KZ_GPIO_SET_DIR_IN( PORT_MEMS_READY );
+	KZ_GPIOB_SET_DIR_IN( PORT_MEMS_READY );
 }
 /**
  * @fn		static void spi_write( UB addr, UB dat )
@@ -114,7 +114,7 @@ void	kzdev_mems_stop(void)
 BOOL	kzdev_mems_isReady(void)
 {
 	if( mbActivated )
-		return (KZ_GPIO_GET( PORT_MEMS_READY ))? TRUE : FALSE;
+		return (KZ_GPIOB_GET( PORT_MEMS_READY ))? TRUE : FALSE;
 	else
 		return FALSE;
 }

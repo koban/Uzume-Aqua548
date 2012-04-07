@@ -91,13 +91,13 @@ static BOOL snd(void)
 			++mpbyTxBuf;
 			--mnTxCount;
 			
-			*pSPI_TDBR = reg;
+			*pSPI0_TDBR = reg;
 			ssync();
 			return TRUE;
 		}
 		
 		/* No data, send 0xFF */
-		*pSPI_TDBR = 0xFF;
+		*pSPI0_TDBR = 0xFF;
 	}
 	else
 	{
@@ -109,13 +109,13 @@ static BOOL snd(void)
 			mpbyTxBuf+=2;
 			--mnTxCount;
 			
-			*pSPI_TDBR = reg;
+			*pSPI0_TDBR = reg;
 			ssync();
 			return TRUE;
 		}
 		
 		/* No data, send 0xFFFF */
-		*pSPI_TDBR = 0xFFFF;
+		*pSPI0_TDBR = 0xFFFF;
 	}
 	return FALSE;
 	
@@ -133,7 +133,7 @@ static BOOL get_rx(void)
 		/* Get 8bit */
 		if ( mnRxCount > 0) 
 		{
-			UH reg = *pSPI_RDBR;
+			UH reg = *pSPI0_RDBR;
 			ssync();
 			
 			*mpbyRxBuf = (UB) reg & 0xFF;
@@ -147,7 +147,7 @@ static BOOL get_rx(void)
 		/* Get 16bit */
 		if ( mnRxCount > 0) 
 		{	
-			UH reg = *pSPI_RDBR;
+			UH reg = *pSPI0_RDBR;
 			ssync();
 			
 			*((UH *) mpbyRxBuf) = reg;
@@ -171,10 +171,10 @@ static BOOL rcv_snd(void)
 		/* transfer end */
 		/* CS disable */
 		if( mpCurConfig->mnCS >= 0 )
-			*pSPI_FLG &= ~( 1 << ( mpCurConfig->mnCS  ) );
+			*pSPI0_FLG &= ~( 1 << ( mpCurConfig->mnCS  ) );
 
 		/* SPI disable */
-		*pSPI_CTL = 0;
+		*pSPI0_CTL = 0;
 		ssync();
 		
 		/* Get rest of one rx message, if there is. */
@@ -194,7 +194,7 @@ static BOOL rcv_snd(void)
 		if (!get_rx() )
 		{
 			/* get dummy data for trigger */
-			volatile UH dummy = *pSPI_RDBR;
+			volatile UH dummy = *pSPI0_RDBR;
 		}
 		return TRUE;
 	}
@@ -219,11 +219,11 @@ static void spi_start(const SpiDeviceConfigurator_t* config, const void* pTx, in
 	mnTxCount = nTx;
 	mnRxCount = nRx;
 	
-	*pSPI_BAUD = SYSCLOCK / 2 / config->mdwBPS;
+	*pSPI0_BAUD = SYSCLOCK / 2 / config->mdwBPS;
 
 	/* double bufferの空読み */
-	dummy = *pSPI_RDBR;
-	dummy = *pSPI_RDBR;
+	dummy = *pSPI0_RDBR;
+	dummy = *pSPI0_RDBR;
 	
 	spi_ctl = ( config->mnDeviceBit == KZDEV_SPI_8BIT )? SPE | MSTR | GM | ( 00 & TIMOD)
 			: SPE | MSTR |  0x0100/*16bit*/| GM | ( 00 & TIMOD);
@@ -231,16 +231,16 @@ static void spi_start(const SpiDeviceConfigurator_t* config, const void* pTx, in
 	spi_ctl |= ( config->mbCPOL )? CPOL : 0;
 	spi_ctl |= ( config->mbCPHA )? CPHA : 0;
 			
-	*pSPI_CTL = spi_ctl;
+	*pSPI0_CTL = spi_ctl;
 				
 	snd();
 					
 	if( config->mnCS >= 0 )
-		*pSPI_FLG |=  1 <<( config->mnCS );
+		*pSPI0_FLG |=  1 <<( config->mnCS );
 		
 	ssync();
 	
-	dummy = *pSPI_RDBR;
+	dummy = *pSPI0_RDBR;
 }
 /**
  * @fn			static int exec_by_interrupt(const SpiDeviceConfigurator_t* config, const void* pTx, int nTx,  void* pRx, int nRx )
@@ -256,7 +256,7 @@ static int exec_by_interrupt(const SpiDeviceConfigurator_t* config, const void* 
 	int ret = (nTx > nRx)? nTx : nRx;
 	spi_start(config,pTx,nTx,pRx,nRx);	
 	
-	ena_int(INHNO_SPI);
+	ena_int(INHNO_SPI0);
 
 	if( twai_sem( SPI_COMPLETE_SIG , SPI_TIMEOUT_PER_BYTE * ret) != E_OK )
 	{
@@ -282,7 +282,7 @@ static int exec_by_polling(const SpiDeviceConfigurator_t* config, const void* pT
 	
 	for(;;)
 	{
-		while( !(*pSPI_STAT & 01)) ;
+		while( !(*pSPI0_STAT & 01)) ;
 		if ( !rcv_snd() )	break;
 	}
 	
@@ -315,7 +315,7 @@ int		kzdev_spi_regist( KZDEV_SPI_BITLEN_t nBitLen, UW dwBps, int nCS, BOOL bCPOL
 		config->mbCPHA = bCPHA;
 		
 		if( nCS >= 0 )
-			*pSPI_FLG &= ~( 1 <<( config->mnCS + 8) );
+			*pSPI0_FLG &= ~( 1 <<( config->mnCS + 8) );
 	}
 	
 	return ret;

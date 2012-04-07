@@ -75,12 +75,11 @@ void		kzdev_cache_flushInv( void *addr, int n );
 
 
 /*--- GPIO Macro -----------------------------------*/
-#define	KZ_GPIO_SET_DIR_OUT(no)		do {	*pFIO_DIR |= (1<<no );	*pFIO_INEN &= ~(1<<no);  }while(0)
-#define	KZ_GPIO_SET_DIR_IN(no)		do {	*pFIO_DIR &= ~(1<<no );	*pFIO_INEN |= (1<<no);	 }while(0)
-#define	KZ_GPIO_SET_HI(no)			do {	asm volatile("ssync;"); *pFIO_FLAG_S = (1<<no);	}while(0)
-#define	KZ_GPIO_SET_LO(no)			do {	asm volatile("ssync;"); *pFIO_FLAG_C = (1<<no);	}while(0)
-#define	KZ_GPIO_SET_TGL(no)			do {	asm volatile("ssync;"); *pFIO_FLAG_T = (1<<no);	}while(0)
-#define	KZ_GPIO_GET(no)				*pFIO_FLAG_D & ( 1 << no )
+#define	KZ_GPIOB_SET_DIR_OUT(no)	do {	*pPORTB_DIR_SET |= (1<<no );	*pPORTB_INEN &= ~(1<<no);  }while(0)
+#define	KZ_GPIOB_SET_DIR_IN(no)		do {	*pPORTB_DIR_SET &= ~(1<<no );	*pPORTB_INEN |= (1<<no);	}while(0)
+#define	KZ_GPIOB_SET_HI(no)			do {	asm volatile("ssync;"); *pPORTB_SET = (1<<no);	}while(0)
+#define	KZ_GPIOB_SET_LO(no)			do {	asm volatile("ssync;"); *pPORTB_CLEAR = (1<<no);	}while(0)
+#define	KZ_GPIOB_GET(no)			*pPORTB & ( 1 << no )
 
 
 

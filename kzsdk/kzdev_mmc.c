@@ -35,9 +35,9 @@
 #define CMD55	(0x40+55)	/* APP_CMD */
 #define CMD58	(0x40+58)	/* READ_OCR */
 
-#define		SETUP_SPI_CS()		KZ_GPIO_SET_DIR_OUT( SPI_CS )
-#define 	DESELECT()			KZ_GPIO_SET_HI( SPI_CS )
-#define		SELECT()			KZ_GPIO_SET_LO( SPI_CS )
+#define		SETUP_SPI_CS()		KZ_GPIOB_SET_DIR_OUT( SPI_CS )
+#define 	DESELECT()			KZ_GPIOB_SET_HI( SPI_CS )
+#define		SELECT()			KZ_GPIOB_SET_LO( SPI_CS )
 
 
 /*--------------------------------------------------------------------------

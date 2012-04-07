@@ -112,10 +112,10 @@ void KzAttIniDeviceDrivers(ID idCycDevPol, ID idTskDevPol)
 		mSwCB.mIndi[i].mnSwBit = sw_def[i];
 		mSwCB.mIndi[i].mbIniVal = FALSE;
 		mSwCB.mIndi[i].mbCurVal = FALSE;
-		KZ_GPIO_SET_DIR_IN( mSwCB.mIndi[i].mnSwBit );		
+		KZ_GPIOB_SET_DIR_IN( mSwCB.mIndi[i].mnSwBit );		
 		
 		/* store Initial status */
-		mSwCB.mIndi[i].mbIniVal = ( KZ_GPIO_GET( mSwCB.mIndi[i].mnSwBit ) )? FALSE : TRUE;
+		mSwCB.mIndi[i].mbIniVal = ( KZ_GPIOB_GET( mSwCB.mIndi[i].mnSwBit ) )? FALSE : TRUE;
 		mSwCB.mIndi[i].mbCurVal = mSwCB.mIndi[i].mbIniVal;
 	}
 	mSwCB.mfnCbk = 0;
@@ -131,8 +131,8 @@ void KzAttIniDeviceDrivers(ID idCycDevPol, ID idTskDevPol)
 		mLedCB.mIndi[i].mnBlinkTimeOFF = 0;
 		mLedCB.mIndi[i].mnBlinkTimeON = 0;
 		mLedCB.mIndi[i].mnBlinkCount = 0;
-		KZ_GPIO_SET_HI( mLedCB.mIndi[i].mnLedBit );	
-		KZ_GPIO_SET_DIR_OUT( mLedCB.mIndi[i].mnLedBit );	
+		KZ_GPIOB_SET_HI( mLedCB.mIndi[i].mnLedBit );	
+		KZ_GPIOB_SET_DIR_OUT( mLedCB.mIndi[i].mnLedBit );	
 	}
 	mLedCB.mnScanCount = 0;
 	
@@ -155,7 +155,7 @@ static void device_pol(void)
 		mSwCB.mnScanCount = 0;
 		for(i=0;i<KZDEV_SW_NUM;++i)
 		{
-			BOOL sw = (KZ_GPIO_GET( mSwCB.mIndi[i].mnSwBit ))? FALSE : TRUE;
+			BOOL sw = (KZ_GPIOB_GET( mSwCB.mIndi[i].mnSwBit ))? FALSE : TRUE;
 			if( sw != mSwCB.mIndi[i].mbCurVal || mSwCB.mbForceCbk  )
 			{
 				mSwCB.mIndi[i].mbCurVal = sw;
@@ -197,8 +197,8 @@ static void device_pol(void)
 					}
 				}
 			}
-			if( bOn )	KZ_GPIO_SET_LO( mLedCB.mIndi[i].mnLedBit );	
-			else		KZ_GPIO_SET_HI( mLedCB.mIndi[i].mnLedBit );	
+			if( bOn )	KZ_GPIOB_SET_LO( mLedCB.mIndi[i].mnLedBit );	
+			else		KZ_GPIOB_SET_HI( mLedCB.mIndi[i].mnLedBit );	
 		}
 	}
 #endif
