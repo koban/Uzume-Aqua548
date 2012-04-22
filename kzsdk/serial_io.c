@@ -45,7 +45,7 @@ void KzPutchar(B c)
 {
 
 #if TARGET_TOOL == TOOL_GCC || TARGET_TOOL == TOOL_VDSP
-	serial_wri_dat(1,(char*)&c,1);
+	serial_wri_dat(2,(char*)&c,1);
 #elif TARGET_TOOL == TOOL_VS2008
 #undef putchar
 	putchar( c );

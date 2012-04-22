@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding='ISO-8859-1'?>
-<visualdsp-project-group generated="Sat Apr 14 17:51:36 2012" version="1.0.0.0" active-project="hello">
+<visualdsp-project-group generated="Sun Apr 22 22:45:18 2012" version="1.0.0.0" active-project="hello">
 	<project name="makeoffset" file="..\jsp\utils\blackfin-vdsp\makeoffset.dpj">
 	</project>
 	<project name="fatfs" file="..\fatfs\fatfs.dpj">

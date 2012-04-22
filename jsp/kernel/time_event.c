@@ -337,8 +337,6 @@ isig_tim(void)
 	TMEVTB	*tmevtb;
 	ER	ercd;
 	
-	asm volatile("emuexcpt;");
-
 	LOG_ISIG_TIM_ENTER();
 	CHECK_INTCTX_UNL();
 	i_lock_cpu();

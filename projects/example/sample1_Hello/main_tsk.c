@@ -27,12 +27,8 @@
 /*=========================================================================*/
 void main_task(VP_INT exinf)
 {
-	while(1);
+	printf("Hello World\n");	
 	
-	printf("Hello World\n");
-	
-	asm volatile("emuexcpt;");
-	while(1);
 	/* main_tsk exit */
 	ext_tsk();
 }

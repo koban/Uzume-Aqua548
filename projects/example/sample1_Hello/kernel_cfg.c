@@ -45,7 +45,7 @@ const TINIB _kernel_tinib_table[TNUM_TSKID] = {
 	{TA_HLNG | TA_ACT, (VP_INT)(0), (FP)(main_task), INT_PRIORITY(8), __TROUND_STK_UNIT(4096), __stack_MAIN_TASK, TA_NULL, (FP)(NULL)},
 	{TA_HLNG | TA_ACT, (VP_INT)(0), (FP)(KzDevPollingTask), INT_PRIORITY(5), __TROUND_STK_UNIT(2048), __stack_TSK_DEV_POL, TA_NULL, (FP)(NULL)},
 	{TA_HLNG | TA_ACT, (VP_INT)(0), (FP)(KzAudioDspTask), INT_PRIORITY(1), __TROUND_STK_UNIT(1024), __stack_TSK_DEV_AUDIO, TA_NULL, (FP)(NULL)},
-	{TA_HLNG | TA_ACT, (VP_INT)(( VP_INT ) 1), (FP)(logtask), INT_PRIORITY(LOGTASK_PRIORITY), __TROUND_STK_UNIT(LOGTASK_STACK_SIZE), __stack_LOGTASK, TA_NULL, (FP)(NULL)}
+	{TA_HLNG | TA_ACT, (VP_INT)(( VP_INT ) 2), (FP)(logtask), INT_PRIORITY(LOGTASK_PRIORITY), __TROUND_STK_UNIT(LOGTASK_STACK_SIZE), __stack_LOGTASK, TA_NULL, (FP)(NULL)}
 };
 
 const ID _kernel_torder_table[TNUM_TSKID] = {1,2,3,4};
@@ -55,11 +55,13 @@ TCB _kernel_tcb_table[TNUM_TSKID];
 
 	/* Object initializer [semaphore] */
 
-#define TNUM_SEMID 5
+#define TNUM_SEMID 7
 
 const ID _kernel_tmax_semid = (TMIN_SEMID + TNUM_SEMID - 1);
 
 const SEMINIB _kernel_seminib_table[TNUM_SEMID] = {
+	{TA_TPRI, 1, 1},
+	{TA_TPRI, 0, 1},
 	{TA_TPRI, 1, 1},
 	{TA_TPRI, 0, 1},
 	{TA_TPRI, 1, 1},
@@ -125,21 +127,19 @@ CYCCB _kernel_cyccb_table[TNUM_CYCID];
 
 	/* Object initializer [interrupt] */
 
-#define TNUM_INHNO 5
+#define TNUM_INHNO 4
 
 const UINT _kernel_tnum_inhno = TNUM_INHNO;
 
-CFG_INTHDR_ENTRY(sio0_rx_handler);
-CFG_INTHDR_ENTRY(sio0_tx_handler);
+CFG_INTHDR_ENTRY(sio1_rx_handler);
+CFG_INTHDR_ENTRY(sio1_tx_handler);
 CFG_INTHDR_ENTRY(timer_handler);
-CFG_INTHDR_ENTRY(KzISRSpi);
 CFG_INTHDR_ENTRY(KzAudioISRSport0);
 
 const INHINIB _kernel_inhinib_table[TNUM_INHNO] = {
-	{14,TA_HLNG,(FP)CFG_INT_ENTRY(sio0_rx_handler)},
-	{15,TA_HLNG,(FP)CFG_INT_ENTRY(sio0_tx_handler)},
-	{18,TA_HLNG,(FP)CFG_INT_ENTRY(timer_handler)},
-	{INHNO_SPI,TA_HLNG,(FP)CFG_INT_ENTRY(KzISRSpi)},
+	{41,TA_HLNG,(FP)CFG_INT_ENTRY(sio1_rx_handler)},
+	{42,TA_HLNG,(FP)CFG_INT_ENTRY(sio1_tx_handler)},
+	{93,TA_HLNG,(FP)CFG_INT_ENTRY(timer_handler)},
 	{INHNO_SPORT0_RX,TA_HLNG,(FP)CFG_INT_ENTRY(KzAudioISRSport0)}
 };
 

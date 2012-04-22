@@ -9,7 +9,9 @@
 #define SEM_FS               3
 #define SEM_SPI              1
 #define SERIAL_RCV_SEM1      4
+#define SERIAL_RCV_SEM2      6
 #define SERIAL_SND_SEM1      5
+#define SERIAL_SND_SEM2      7
 #define SIG_SPI              2
 #define TSK_DEV_AUDIO        3
 #define TSK_DEV_POL          2

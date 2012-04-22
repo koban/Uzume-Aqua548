@@ -224,7 +224,7 @@ void make_priority_mask( void )
  		priority_mask[i].imask[1] = 0;
  		priority_mask[i].imask[2] = 0;
  	}
-
+ 	
 	device = 1;
 	iar = *pSIC_IAR0;
 	INSTALL_PRIORITY(0)
@@ -357,7 +357,6 @@ void device_dispatcher( unsigned int priority, unsigned int imask )
 	// 割り込み源が特定できないなら、コア由来である
 	if ( (0u == candidates[0]) && (0u == candidates[1]) && (0u == candidates[2]) )
 	{
-		asm volatile("emuexcpt;");
 		if ( priority == ik_hardware_err )
 			dev_vector[INHNO_HW_ERROR]();
 		else
@@ -407,7 +406,7 @@ void device_dispatcher( unsigned int priority, unsigned int imask )
 			device = 31;
 		else
 		{
-			asm volatile("emuexcpt;");
+			
 #ifdef __GNUC__
 	asm ( "r1.L = signbits %1; %0 = r1.L(z);":"=d"(device) :"d"(candidates[2]): "R1"  );
 #elif defined(__ECC__)
