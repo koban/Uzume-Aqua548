@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding='ISO-8859-1'?>
-<visualdsp-project-group generated="Sun Apr 01 10:05:44 2012" version="1.0.0.0" active-project="kzsdk">
+<visualdsp-project-group generated="Sat Apr 14 17:51:36 2012" version="1.0.0.0" active-project="hello">
 	<project name="makeoffset" file="..\jsp\utils\blackfin-vdsp\makeoffset.dpj">
 	</project>
 	<project name="fatfs" file="..\fatfs\fatfs.dpj">
@@ -7,5 +7,12 @@
 	<project name="kzsdk" file="..\kzsdk\kzsdk.dpj">
 	</project>
 	<project name="libkernel" file="..\jsp\config\blackfin\ezkit_bf548\jsp_ezkit_bf548.dpj">
+	</project>
+	<project name="hello" file="..\projects\example\sample1_Hello\hello.dpj">
+		<dependencies>
+			<dependent-project>fatfs</dependent-project>
+			<dependent-project>kzsdk</dependent-project>
+			<dependent-project>libkernel</dependent-project>
+		</dependencies>
 	</project>
 </visualdsp-project-group>

@@ -42,11 +42,11 @@ static void pm_putc( unsigned char c )
 {
 
 		/* THRが空になるまで待つ */
-	while ( ! ( *pUART0_LSR & THRE ) )
+	while ( ! ( *pUART1_LSR & THRE ) )
 		;
 
 		/*  THRが空になったら1文字送信 */
-	*pUART0_THR = c;
+	*pUART1_THR = c;
 }
 
 /**
@@ -58,12 +58,12 @@ static void pm_putc( unsigned char c )
 static BOOL is_ready()
 {
 		/* 受信データはあるか。 */
-	if ( *pUART0_LSR & DR )
+	if ( *pUART1_LSR & DR )
 
 	{
 		char c;
 
-		c= *pUART0_RBR;
+		c= *pUART1_RBR;
 		if ( c == '!' )
 			return TRUE;
 	}

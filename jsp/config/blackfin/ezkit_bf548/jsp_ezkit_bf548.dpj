@@ -35,11 +35,11 @@
 		</configuration>
 		<configuration name="Release">
 			<intermediate-dir>.\Release</intermediate-dir>
-			<output-dir>.</output-dir>
+			<output-dir>..\..\..\..\lib</output-dir>
 			<changed-property-page-flags>0</changed-property-page-flags>
 			<tools>
 				<tool type="Compiler">
-					<option><![CDATA[|-Version>5.0|-O>1|-O1>1|-Ov>100|-ipa>1|-g>1|-no-annotate>0|-Oa>1|-save-temps -path-output>0|-ED>0|-no-auto-attrs>0|-no-builtin>0|-no-extra-keywords>0|-enum-is-int>0|-no-fp-associative>0|-structs-do-not-overlap>0|-implicit-pointers>0|-eh >0|-rtti>1|-check-init-order>0|-ignore-std>1|-const-read-write>0|-const-strings>0|-no-multiline>1|-misra>0|-misra-strict>0|-misra-no-cross-module>0|-misra-no-runtime>1|-misra-testing>1|-misra-suppress-advisory>0|-I>.;..;..\_common_bf548;..\..\..\kernel;..\..\..\include;..\..\..\pdic\simple_sio;..\..\..\utils\blackfin-vdsp|-no-std-inc>0|-double-size-32>1|-double-size-any>0|-Ofp>0|-full-io>0|-guard-vol-loads>0|-decls-strong>1|-no-saturation>0|-cplbs>0|-sdram>0|-multicore>0|-pguide>0|NOSWITCH>0|-flags-compiler --diag_warning,implicit_func_decl>1|-warn-protos>1|-flags-compiler --diag_warning,call_not_inlined>0|-Wremarks>0|-w>0]]></option>
+					<option><![CDATA[|-Version>5.0|-O>1|-O1>1|-Ov>100|-ipa>1|-g>1|-no-annotate>0|-Oa>1|-save-temps -path-output>0|-ED>0|-no-auto-attrs>0|-no-builtin>0|-no-extra-keywords>0|-enum-is-int>0|-no-fp-associative>0|-structs-do-not-overlap>0|-implicit-pointers>0|-eh >0|-rtti>1|-check-init-order>0|-ignore-std>1|-const-read-write>0|-const-strings>0|-no-multiline>1|-misra>0|-misra-strict>0|-misra-no-cross-module>0|-misra-no-runtime>1|-misra-testing>1|-misra-suppress-advisory>0|-I>.;..;..\_common_bf548;..\..\..\kernel;..\..\..\include;..\..\..\pdic\simple_sio;..\..\..\utils\blackfin-vdsp|-no-std-inc>0|-double-size-32>1|-double-size-any>0|-Ofp>0|-guard-vol-loads>0|-decls-strong>1|-no-saturation>0|-cplbs>0|-sdram>0|-multicore>0|-stack-detect>0|-pguide>0|NOSWITCH>0|-flags-compiler --diag_warning,implicit_func_decl>1|-warn-protos>1|-flags-compiler --diag_warning,call_not_inlined>0|-Wremarks>0|-w>0]]></option>
 				</tool>
 				<tool type="Assembler">
 					<option><![CDATA[|-Version>4.5|-v>0|-g>1|-l>0|-save-temps>0|-sp>0|AdditionalOptions>-flags-pp -tokenize-dot|-i>.;..;..\_common_bf548;..\..\..\kernel;..\..\..\include;..\..\..\pdic\simple_sio;..\..\..\utils\blackfin-vdsp|-D>LABEL_ASM __ECC__]]></option>
