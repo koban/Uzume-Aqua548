@@ -10,7 +10,9 @@
 #define SEM_PRINT            1
 #define SEM_SPI              2
 #define SERIAL_RCV_SEM1      5
+#define SERIAL_RCV_SEM2      7
 #define SERIAL_SND_SEM1      6
+#define SERIAL_SND_SEM2      8
 #define SIG_SPI              3
 #define TASK_HI              1
 #define TASK_LO              2

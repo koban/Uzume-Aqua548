@@ -7,7 +7,7 @@
 		<type>Library file</type>
 	</target>
 	<!-- Configurations -->
-	<configurations active="Release">
+	<configurations active="Debug">
 		<configuration name="Debug">
 			<intermediate-dir>.\Debug</intermediate-dir>
 			<output-dir>..\lib</output-dir>

@@ -260,7 +260,7 @@ KZSTATUS_t	KzCmdlineStart(void)
 {
 	int k=0;
 
-	serial_ctl_por( 1, IOCTL_CRLF | IOCTL_FCSND | IOCTL_FCRCV);
+	serial_ctl_por( 2, IOCTL_CRLF | IOCTL_FCSND | IOCTL_FCRCV);
 	
 	mbCmdExitSignal = FALSE;
 	ResetBuffer();

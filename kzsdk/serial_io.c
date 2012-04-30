@@ -30,7 +30,7 @@ B KzGetchar(void)
 {
 	char ret;
 #if TARGET_TOOL == TOOL_GCC || TARGET_TOOL == TOOL_VDSP
-	serial_rea_dat(1,&ret,1);
+	serial_rea_dat(2,&ret,1);
 #elif TARGET_TOOL == TOOL_VS2008
 #undef getchar
 	ret = getchar();
