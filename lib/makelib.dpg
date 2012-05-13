@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding='ISO-8859-1'?>
-<visualdsp-project-group generated="Sat May 12 16:52:06 2012" version="1.0.0.0" active-project="helloCmd">
+<visualdsp-project-group generated="Sat May 12 20:48:10 2012" version="1.0.0.0" active-project="Natural Tiny Shell">
 	<project name="makeoffset" file="..\jsp\utils\blackfin-vdsp\makeoffset.dpj">
 	</project>
 	<project name="fatfs" file="..\fatfs\fatfs.dpj">
@@ -8,6 +8,11 @@
 	</project>
 	<project name="libkernel" file="..\jsp\config\blackfin\ezkit_bf548\jsp_ezkit_bf548.dpj">
 	</project>
-	<project name="helloCmd" file="..\projects\example\sample2_helloCmd\helloCmd.dpj">
+	<project name="Natural Tiny Shell" file="..\projects\example\sample10_NaturalTinyShell\shell.dpj">
+		<dependencies>
+			<dependent-project>fatfs</dependent-project>
+			<dependent-project>kzsdk</dependent-project>
+			<dependent-project>libkernel</dependent-project>
+		</dependencies>
 	</project>
 </visualdsp-project-group>

@@ -21,7 +21,7 @@
  * @brief	If set (1) Cache Enable. only supported on VDSP++ 
  * @ingroup	UserCongifuration
  */
-#define KZCACAHE_ENABLE						(0)
+#define KZCACAHE_ENABLE						(1)
 
 
 /** 

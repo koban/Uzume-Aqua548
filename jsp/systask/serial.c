@@ -175,7 +175,7 @@ serial_opn_por(ID portid)
 		/*
 		 *  変数の初期化
 		 */
-		spcb->ioctl = (IOCTL_ECHO | IOCTL_CRLF
+		spcb->ioctl = (/*IOCTL_ECHO |*/ IOCTL_CRLF
 					| IOCTL_FCSND | IOCTL_FCRCV);
 
 

@@ -38,6 +38,7 @@ void main_task(VP_INT exinf)
 	/*
 	 *	Filesystem Start, Insert SD-Card before program start
 	 */
+#if 0
 	if( KzFilesystemStart() == KZ_OK )
 	{
 		/*
@@ -51,13 +52,13 @@ void main_task(VP_INT exinf)
 	}
 	else					
 		printf("SD-Card not Ready.\n");
-	
+#endif
 	/*
 	 *	Add Device Driver Command
 	 */
 	KzAddCmdDeviceDriver();
 	
-#if 0
+#if 1
 	/* Stdio Test for SDK develop */
 	KzAddCmdStdioTest();
 #endif

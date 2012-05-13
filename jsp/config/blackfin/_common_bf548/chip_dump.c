@@ -8,6 +8,14 @@
 #include "jsp_kernel.h"
 #include <cdefBF548.h>
 
+// user setting
+// When core debug , set as (1)
+#define USE_DUMP		(0)
+
+
+
+#if USE_DUMP != 0
+
 /**
  * \brief UARTおよび付随するDMAの動作を停止し、すべての割り込みを禁止する。
  *
@@ -340,3 +348,17 @@ void spurious_exc_handler(VP p_excinf)
 	spurious_int_handler();
 }
 
+
+#else  //USE_DUMP != 0
+
+void spurious_int_handler()
+{
+	while(1) ;
+}
+
+void spurious_exc_handler(VP p_excinf)
+{
+	while(1) ;
+}
+
+#endif //USE_DUMP != 0
